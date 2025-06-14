@@ -11,6 +11,10 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   );
+  //TODO: poner url correcta
+  app.enableCors({
+    origin: ['http://localhost:4200', 'https://miapp.com'],
+  });
 
   await app.listen(process.env.PORT ?? 3000);
 }

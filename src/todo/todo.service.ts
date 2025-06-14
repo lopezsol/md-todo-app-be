@@ -9,6 +9,7 @@ import { Repository } from 'typeorm';
 import { Todo } from './entities/todo.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PostgresError } from './interfaces/postgres-error.interface';
+import { UpdateTodoDto } from './dto/update-todo.dto';
 
 @Injectable()
 export class TodoService {
@@ -55,6 +56,21 @@ export class TodoService {
     }
   }
 
+  async update(id: string, updateTodoDto: UpdateTodoDto) {
+    const todo = await this._todoRepository.preload({
+      id: id,
+      ...updateTodoDto,
+    });
+
+    if (!todo) throw new NotFoundException(`Todo with ID "${id}" not found`);
+    try {
+      await this._todoRepository.save(todo);
+      return todo;
+    } catch (error) {
+      this.handleDBExceptions(error as PostgresError);
+    }
+  }
+
   private handleDBExceptions(error: PostgresError) {
     if (error.code === '23505') throw new BadRequestException(error.detail);
 
@@ -74,8 +90,4 @@ export class TodoService {
       'Unexpected error, check server logs.',
     );
   }
-
-  // update(id: number, updateTodoDto: UpdateTodoDto) {
-  //   return `This action updates a #${id} todo`;
-  // }
 }

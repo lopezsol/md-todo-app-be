@@ -6,9 +6,11 @@ import {
   Param,
   Delete,
   ParseUUIDPipe,
+  Patch,
 } from '@nestjs/common';
 import { TodoService } from './todo.service';
 import { CreateTodoDto } from './dto/create-todo.dto';
+import { UpdateTodoDto } from './dto/update-todo.dto';
 
 @Controller('todo')
 export class TodoController {
@@ -34,8 +36,11 @@ export class TodoController {
     return this.todoService.findOne(id);
   }
 
-  // @Patch(':id')
-  // update(@Param('id', ParseUUIDPipe) id: string, @Body() updateTodoDto: UpdateTodoDto) {
-  //   return this.todoService.update(+id, updateTodoDto);
-  // }
+  @Patch(':id')
+  update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateTodoDto: UpdateTodoDto,
+  ) {
+    return this.todoService.update(id, updateTodoDto);
+  }
 }
